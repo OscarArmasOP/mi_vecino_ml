@@ -60,7 +60,7 @@ def apriori(id):
     result = []
     for rule in range(0,5):
         print(unique_userRules[rule].strip())
-        result.append(list(Emprendimiento.objects.filter(type=unique_userRules[rule].strip()).values()[:1]))
+        result.append(Emprendimiento.objects.filter(type=unique_userRules[rule].strip()).values()[:1][0])
 
     return result
 
