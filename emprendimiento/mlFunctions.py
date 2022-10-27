@@ -13,7 +13,6 @@ def apriori(id):
     qs = User.objects.all().values_list('liked')
     app_names_list = list(val[0] for val in qs)
 
-    
     userQs = User.objects.filter(user_id=user_id).values('liked')[0]['liked']
     userStr =  re.sub("\[|\'|\]","",userQs)
     userLikedList = userStr.split(sep=',')
@@ -48,12 +47,22 @@ def apriori(id):
     #Order rules by lift
     resultsinApriorySorted = sorted(resultsinApriory, key=itemgetter(4), reverse=True)
 
-    # userRules = [rule[0] for rule in resultsinApriorySorted if recommendedValue in rule[1]]
+    unique_recommendedValue = []
+    [unique_recommendedValue.append(recomValue.strip()) for recomValue in recommendedValue if recomValue.strip() not in unique_recommendedValue]
 
-    # empQS = Emprendimiento.objects.filter(type=userRules[0].lstrip()).values_list()
+    userRules = []
+    for recomValue in range(0, len(unique_recommendedValue)):
+        userRules = [rule[0].strip() for rule in resultsinApriorySorted if unique_recommendedValue[recomValue] in rule[1].strip()]
 
-    # resultsinDataFrame.nlargest(n = 10, columns = 'Lift')
-    return resultsinApriory
+    unique_userRules = []
+    [unique_userRules.append(rule) for rule in userRules if rule not in unique_userRules]
+
+    result = []
+    for rule in range(0,5):
+        print(unique_userRules[rule].strip())
+        result.append(list(Emprendimiento.objects.filter(type=unique_userRules[rule].strip()).values()[:1]))
+
+    return result
 
 
 
