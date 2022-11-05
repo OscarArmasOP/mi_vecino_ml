@@ -1,10 +1,12 @@
 
-from .models import User, Emprendimiento
+from unittest import result
+from .models import User, Emprendimiento, Review
 import re
 import numpy as np
 import matplotlib.pyplot as plt
 import pandas as pd
 from operator import itemgetter
+from django.db.models import Avg
 
 
 def apriori(id):
@@ -64,5 +66,17 @@ def apriori(id):
 
     return result
 
+
+def recommendations():
+    result = []
+    scores = []
+    result.append(Emprendimiento.objects.all().order_by('-id')[:5].values())
+    for score in range(1,8):
+        print('score: ',score)
+        scores.append(Review.objects.filter(emprendimiento_id=score).aggregate(Avg('score'))['score__avg'])
+       # print(Review.objects.filter(emprendimiento_id=score).aggregate(Avg('score')))
+    print('socres: ',scores)
+    print(Review.objects.all().order_by('-id')[:5].values())
+    return result
 
 
