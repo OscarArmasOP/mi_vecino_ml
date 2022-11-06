@@ -188,7 +188,35 @@ class User(models.Model):
     is_active = models.BooleanField(blank=True, null=True)
     is_not_loked = models.BooleanField(blank=True, null=True)
     liked = models.CharField(max_length=500, blank=True, null=True)
+    likedd = models.JSONField(blank=True, null=True)
+    likeddd = models.JSONField(blank=True, null=True)
+    favorite_emprendimientos = models.JSONField(blank=True, null=True)
 
     class Meta:
         managed = False
         db_table = 'user'
+
+
+class User2(models.Model):
+    user_id = models.CharField(max_length=50)
+    username = models.CharField(max_length=100)
+    full_name = models.CharField(max_length=200)
+    email = models.CharField(max_length=200)
+    password = models.CharField(max_length=200)
+    gender = models.CharField(max_length=10, blank=True, null=True)
+    birth_date = models.DateTimeField()
+    join_date = models.DateTimeField()
+    role = models.CharField(max_length=20)
+    authorities = models.JSONField(blank=True, null=True)
+    profile_image_url = models.CharField(max_length=250, blank=True, null=True)
+    last_login_date = models.DateTimeField(blank=True, null=True)
+    last_login_date_display = models.DateTimeField(blank=True, null=True)
+    is_active = models.BooleanField(blank=True, null=True)
+    is_not_loked = models.BooleanField(blank=True, null=True)
+    liked = models.CharField(max_length=500, blank=True, null=True)
+    likedd = models.JSONField(blank=True, null=True)
+    favorite_emprendimientos = models.JSONField(blank=True, null=True)
+
+    class Meta:
+        managed = False
+        db_table = 'user2'
