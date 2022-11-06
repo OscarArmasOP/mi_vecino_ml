@@ -10,21 +10,18 @@ from django.db.models import Avg
 
 
 def apriori(id):
-
     # Data Preprocessing for user 
     user_id = id.data['user_id']
-    user_categoriesQS = User.objects.filter(user_id=user_id).values_list('likedd')[0][0]
-    
-    favorite_empQS = User.objects.filter(user_id=user_id).values_list('favorite_emprendimientos')[0][0]
+    user_categoriesQS = User2.objects.filter(user_id=user_id).values_list('likedd')[0][0]
+    favorite_empQS = User2.objects.filter(user_id=user_id).values_list('favorite_emprendimientos')[0][0]
 
     user_categories = []
     if(user_categoriesQS is not None):
         user_categories = list(val.get('name') for val in user_categoriesQS)
         favorite_emp = list(val.get('name') for val in favorite_empQS)
-        user_categories.append(favorite_emp)
+        # user_categories.append(favorite_emp)
     else:
         user_categories = list(val.get('name') for val in favorite_empQS)
-
     recommendedValue = user_categories
 
     # Data Preprocessing for apriori
@@ -37,7 +34,6 @@ def apriori(id):
     # Training the Apriori model on the dataset
     from apyori import apriori
     rules = apriori(transactions = transactions, min_support = 0.02, min_confidence = 0.02, min_lift = 2, min_length = 2, max_length = 2)
-
     ## Displaying the first results coming directly from the output of the apriori function
     results = list(rules)
     results
@@ -59,15 +55,15 @@ def apriori(id):
    
     unique_recommendedValue = []
     [unique_recommendedValue.append(recomValue) for recomValue in recommendedValue if recomValue not in unique_recommendedValue]
-
     userRules = []
     for recomValue in range(0, len(unique_recommendedValue)):
-        userRules = [rule[0].strip() for rule in resultsinApriorySorted if unique_recommendedValue[recomValue] in rule[1].strip()]
-
+        userRules = [rule[0] for rule in resultsinApriorySorted if unique_recommendedValue[recomValue] in rule[1]]
+    if(len(userRules) == 0):
+        for recomValue in range(0, 5):
+            userRules = [rule[0] for rule in resultsinApriorySorted]
     unique_userRules = []
     [unique_userRules.append(rule) for rule in userRules if rule not in unique_userRules]
     result = []
-
     for rule in range(0,1):
         result.append(Emprendimiento.objects.filter(categories__0__type=unique_userRules[rule]).values()[:1][0])
     return result
@@ -76,13 +72,16 @@ def apriori(id):
 def recommendations():
     result = []
     scores = []
-    result.append(Emprendimiento.objects.all().order_by('-id')[:5].values())
-    for score in range(1,8):
-        # print('score: ',score)
-        scores.append(Review.objects.filter(emprendimiento_id=score).aggregate(Avg('score'))['score__avg'])
-       # print(Review.objects.filter(emprendimiento_id=score).aggregate(Avg('score')))
-    # print('socres: ',scores)
-    # print(Review.objects.all().order_by('-id')[:5].values())
+    top_rated = {"tittle": "Lo mas popular", "Items" : [] }
+    limit = Review.objects.values('emprendimiento_id').distinct().count()
+    result.append({"tittle": "Mas recientes", "Items" : Emprendimiento.objects.all().order_by('-id')[:5].values()})
+    for score in range(1, limit+1):
+        avg = Review.objects.filter(emprendimiento_id=score).aggregate(Avg('score'))['score__avg']
+        scores.append({"id": score, "score": avg})
+    socores_sorted = sorted(scores, key=lambda x: x['score'], reverse=True)[:5]
+    result.append(top_rated)
+    for score in range(0, len(socores_sorted)):
+        result[1]["Items"].append(Emprendimiento.objects.filter(id=socores_sorted[score]['id']).values()[0])
     return result
 
 
