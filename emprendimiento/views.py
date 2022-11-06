@@ -23,6 +23,6 @@ class MlView(viewsets.ModelViewSet):
     @action(detail=False, methods=['get'])
     def getRecommendations(self, request):
         try:
-            return Response(recommendations(), status=status.HTTP_200_OK)
+            return Response(recommendations(request), status=status.HTTP_200_OK)
         except Exception as err:
             return Response({'message': 'Server Error'}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)

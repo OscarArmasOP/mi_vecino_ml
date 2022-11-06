@@ -141,6 +141,9 @@ class Emprendimiento(models.Model):
     telephones = models.JSONField(blank=True, null=True)
     categories = models.JSONField(blank=True, null=True)
     active = models.BooleanField()
+    latitud = models.CharField(max_length=100, blank=True, null=True)
+    longitud = models.CharField(max_length=100, blank=True, null=True)
+    giro = models.CharField(max_length=100, blank=True, null=True)
 
     class Meta:
         managed = False
