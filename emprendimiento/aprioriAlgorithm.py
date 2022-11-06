@@ -1,17 +1,11 @@
 
-from unittest import result
-from .models import User, Emprendimiento, Review, User2
-import re
-import numpy as np
-import matplotlib.pyplot as plt
-import pandas as pd
+from .models import Emprendimiento, User2
 from operator import itemgetter
-from django.db.models import Avg
-from .aprioriAlgorithm import aprioriFunction
+from apyori import apriori
 
-def apriori(id):
+def aprioriFunction(user_id):
     # Data Preprocessing for user 
-    user_id = id.data['user_id']
+    user_id = user_id
     user_categoriesQS = User2.objects.filter(user_id=user_id).values_list('likedd')[0][0]
     favorite_empQS = User2.objects.filter(user_id=user_id).values_list('favorite_emprendimientos')[0][0]
 
@@ -32,7 +26,6 @@ def apriori(id):
 
     
     # Training the Apriori model on the dataset
-    from apyori import apriori
     rules = apriori(transactions = transactions, min_support = 0.02, min_confidence = 0.02, min_lift = 2, min_length = 2, max_length = 2)
     ## Displaying the first results coming directly from the output of the apriori function
     results = list(rules)
@@ -67,40 +60,3 @@ def apriori(id):
     for rule in range(0,2):
         result.append(Emprendimiento.objects.filter(categories__0__type=unique_userRules[rule]).values()[:1][0])
     return result
-
-
-def recommendations(id):
-    print('id', id)
-    user_id = id.data['user_id']
-    result = []
-    scores = []
-    top_rated = {"tittle": "Lo mas popular", "Items" : [] }
-    oficios = {"tittle": "¿Necesitas una mano?", "Items" : [] }
-    emprendimientos = {"tittle": "Visita nuestros emprendimientos", "Items" : [] }
-    profesiones = {"tittle": "¿Necesitas de un profesional?", "Items" : [] }
-    apriori_data = {"tittle": "Algo que te podria gustar", "Items" : [] }
-    apriori_data["Items"] = aprioriFunction(user_id)
-
-    limit = Review.objects.values('emprendimiento_id').distinct().count()
-    result.append({"tittle": "Mas recientes", "Items" : Emprendimiento.objects.all().order_by('-id')[:5].values()})
-    for score in range(1, limit+1):
-        avg = Review.objects.filter(emprendimiento_id=score).aggregate(Avg('score'))['score__avg']
-        scores.append({"id": score, "score": avg})
-    socores_sorted = sorted(scores, key=lambda x: x['score'], reverse=True)[:5]
-    result.append(top_rated)
-    for score in range(0, len(socores_sorted)):
-        result[1]["Items"].append(Emprendimiento.objects.filter(id=socores_sorted[score]['id']).values()[0])
-    result.append(apriori_data)
-    profesionales_data = Emprendimiento.objects.filter(giro='Profesion')[:5].values()
-    emprendimientos_data = Emprendimiento.objects.filter(giro='Emprendimiento')[:5].values()
-    oficios_data = Emprendimiento.objects.filter(giro='Oficio')[:5].values()
-    oficios["Items"] = oficios_data
-    result.append(oficios)
-    emprendimientos["Items"] = emprendimientos_data
-    result.append(emprendimientos)
-    profesiones["Items"] = profesionales_data
-    result.append(profesiones)
-
-    return result
-
-
