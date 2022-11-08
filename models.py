@@ -150,6 +150,25 @@ class Emprendimiento(models.Model):
         db_table = 'emprendimiento'
 
 
+class Emprendimiento2(models.Model):
+    username = models.CharField(max_length=100)
+    name = models.CharField(max_length=120)
+    description = models.CharField(max_length=250)
+    type = models.CharField(max_length=50)
+    join_date = models.DateTimeField()
+    image_url = models.CharField(max_length=250, blank=True, null=True)
+    telephones = models.JSONField(blank=True, null=True)
+    categories = models.JSONField(blank=True, null=True)
+    active = models.BooleanField()
+    longitude = models.CharField(max_length=100, blank=True, null=True)
+    latitude = models.CharField(max_length=100, blank=True, null=True)
+    giro = models.CharField(max_length=100, blank=True, null=True)
+
+    class Meta:
+        managed = False
+        db_table = 'emprendimiento2'
+
+
 class Review(models.Model):
     emprendimiento = models.ForeignKey(Emprendimiento, models.DO_NOTHING)
     username = models.CharField(max_length=100)
@@ -160,6 +179,18 @@ class Review(models.Model):
     class Meta:
         managed = False
         db_table = 'review'
+
+
+class Review2(models.Model):
+    emprendimiento_id = models.IntegerField()
+    username = models.CharField(max_length=100)
+    score = models.FloatField()
+    comment = models.CharField(max_length=250, blank=True, null=True)
+    images_url = models.JSONField(blank=True, null=True)
+
+    class Meta:
+        managed = False
+        db_table = 'review2'
 
 
 class Schedule(models.Model):
@@ -216,10 +247,33 @@ class User2(models.Model):
     last_login_date_display = models.DateTimeField(blank=True, null=True)
     is_active = models.BooleanField(blank=True, null=True)
     is_not_loked = models.BooleanField(blank=True, null=True)
-    liked = models.CharField(max_length=500, blank=True, null=True)
     likedd = models.JSONField(blank=True, null=True)
     favorite_emprendimientos = models.JSONField(blank=True, null=True)
 
     class Meta:
         managed = False
         db_table = 'user2'
+
+
+class User3(models.Model):
+    user_id = models.CharField(max_length=50)
+    username = models.CharField(max_length=100)
+    full_name = models.CharField(max_length=200)
+    email = models.CharField(max_length=200)
+    password = models.CharField(max_length=200)
+    gender = models.CharField(max_length=10, blank=True, null=True)
+    birth_date = models.DateTimeField()
+    join_date = models.DateTimeField()
+    role = models.CharField(max_length=20)
+    authorities = models.JSONField(blank=True, null=True)
+    profile_image_url = models.CharField(max_length=250, blank=True, null=True)
+    last_login_date = models.DateTimeField(blank=True, null=True)
+    last_login_date_display = models.DateTimeField(blank=True, null=True)
+    is_active = models.BooleanField(blank=True, null=True)
+    is_not_locked = models.BooleanField(blank=True, null=True)
+    favorite_emprendimientos = models.JSONField(blank=True, null=True)
+    emprendimientos_categories = models.JSONField(blank=True, null=True)
+
+    class Meta:
+        managed = False
+        db_table = 'user3'
