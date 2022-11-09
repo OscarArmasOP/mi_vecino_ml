@@ -141,8 +141,8 @@ class Emprendimiento(models.Model):
     telephones = models.JSONField(blank=True, null=True)
     categories = models.JSONField(blank=True, null=True)
     active = models.BooleanField()
-    latitud = models.CharField(max_length=100, blank=True, null=True)
-    longitud = models.CharField(max_length=100, blank=True, null=True)
+    longitude = models.CharField(max_length=100, blank=True, null=True)
+    latitude = models.CharField(max_length=100, blank=True, null=True)
     giro = models.CharField(max_length=100, blank=True, null=True)
 
     class Meta:
@@ -220,11 +220,9 @@ class User(models.Model):
     last_login_date = models.DateTimeField(blank=True, null=True)
     last_login_date_display = models.DateTimeField(blank=True, null=True)
     is_active = models.BooleanField(blank=True, null=True)
-    is_not_loked = models.BooleanField(blank=True, null=True)
-    liked = models.CharField(max_length=500, blank=True, null=True)
-    likedd = models.JSONField(blank=True, null=True)
-    likeddd = models.JSONField(blank=True, null=True)
+    is_not_locked = models.BooleanField(blank=True, null=True)
     favorite_emprendimientos = models.JSONField(blank=True, null=True)
+    emprendimientos_categories = models.JSONField(blank=True, null=True)
 
     class Meta:
         managed = False
