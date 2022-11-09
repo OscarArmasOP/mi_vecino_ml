@@ -1,6 +1,6 @@
 
 from unittest import result
-from .models import User, Emprendimiento, Review, User
+from .models import User, Emprendimiento, Review
 from operator import itemgetter
 from django.db.models import Avg
 from .aprioriAlgorithm import aprioriFunction
@@ -67,7 +67,7 @@ def apriori(id):
 
 def recommendations(id):
     print('id', id)
-    user_id = id.data['user_id']
+    user_id = id.GET['user_id']
     result = []
     scores = []
     top_rated = {"tittle": "Lo mas popular", "Items" : [] }
@@ -75,8 +75,9 @@ def recommendations(id):
     emprendimientos = {"tittle": "Visita nuestros emprendimientos", "Items" : [] }
     profesiones = {"tittle": "¿Necesitas de un profesional?", "Items" : [] }
     apriori_data = {"tittle": "Algo que te podria gustar", "Items" : [] }
+    print('Step 1')
     apriori_data["Items"] = aprioriFunction(user_id)
-
+    print('Step2')
     limit = Review.objects.values('emprendimiento_id').distinct().count()
     result.append({"tittle": "Mas recientes", "Items" : Emprendimiento.objects.all().order_by('-id')[:5].values()})
     for score in range(1, limit+1):
@@ -87,7 +88,8 @@ def recommendations(id):
     for score in range(0, len(socores_sorted)):
         result[1]["Items"].append(Emprendimiento.objects.filter(id=socores_sorted[score]['id']).values()[0])
     result.append(apriori_data)
-    profesionales_data = Emprendimiento.objects.filter(type='Profesion')[:5].values()
+    print('Step7')
+    profesionales_data = Emprendimiento.objects.filter(type='Profesional')[:5].values()
     emprendimientos_data = Emprendimiento.objects.filter(type='Emprendimiento')[:5].values()
     oficios_data = Emprendimiento.objects.filter(type='Oficio')[:5].values()
     oficios["Items"] = oficios_data
@@ -98,5 +100,19 @@ def recommendations(id):
     result.append(profesiones)
 
     return result
+
+def similar_places(id):
+    print('similar places')
+    emp_id = id.data['emp_id']
+    result = []
+    emp_giro = Emprendimiento.objects.all().values()[0].get("giro")
+    i = 0
+    while len(result) < 5:
+        similar_place = Emprendimiento.objects.filter(giro=emp_giro)[:1].values()[0]["categories"][0]["type"]
+        if similar_place != result[i]:
+            result[i].append(Emprendimiento.objects.filter(giro=emp_giro)[:1].values())
+        i += 1
+    # result.append({"tittle": "Mas recientes", "Items" : Emprendimiento.objects.all().order_by('-id')[:5].values()})
+    # print('result: ',result)
 
 
