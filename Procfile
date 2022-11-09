@@ -1,0 +1,1 @@
+web: guinicorn miVecino_ml.wsgi --log-file -
