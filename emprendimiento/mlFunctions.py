@@ -102,17 +102,25 @@ def recommendations(id):
     return result
 
 def similar_places(id):
+    test = "APP WORKING..."
     print('similar places')
-    emp_id = id.data['emp_id']
-    result = []
-    emp_giro = Emprendimiento.objects.all().values()[0].get("giro")
-    i = 0
-    while len(result) < 5:
-        similar_place = Emprendimiento.objects.filter(giro=emp_giro)[:1].values()[0]["categories"][0]["type"]
-        if similar_place != result[i]:
-            result[i].append(Emprendimiento.objects.filter(giro=emp_giro)[:1].values())
-        i += 1
+    return test
+    # emp_id = id.data['emp_id']
+    # result = []
+    # emp_giro = Emprendimiento.objects.all().values()[0].get("giro")
+    # i = 0
+    # while len(result) < 5:
+    #     similar_place = Emprendimiento.objects.filter(giro=emp_giro)[:1].values()[0]["categories"][0]["type"]
+    #     if similar_place != result[i]:
+    #         result[i].append(Emprendimiento.objects.filter(giro=emp_giro)[:1].values())
+    #     i += 1
     # result.append({"tittle": "Mas recientes", "Items" : Emprendimiento.objects.all().order_by('-id')[:5].values()})
     # print('result: ',result)
+
+
+def testApp():
+    print('ENTRAMOS')
+    print('WORKING...')
+    
 
 
