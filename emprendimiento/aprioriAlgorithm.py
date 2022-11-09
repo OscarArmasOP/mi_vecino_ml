@@ -1,14 +1,16 @@
 
-from .models import Emprendimiento, User
+from .models import Emprendimiento2, User3
 from operator import itemgetter
 from apyori import apriori
 
 def aprioriFunction(user_id):
     # Data Preprocessing for user 
     user_id = user_id
-    user_categoriesQS = User.objects.filter(user_id=user_id).values_list('emprendimientos_categories')[0][0]
-    favorite_empQS = User.objects.filter(user_id=user_id).values_list('favorite_emprendimientos')[0][0]
+    print('Step3')
+    user_categoriesQS = User3.objects.filter(user_id=user_id).values_list('emprendimientos_categories')[0][0]
+    favorite_empQS = User3.objects.filter(user_id=user_id).values_list('favorite_emprendimientos')[0][0]
     user_categories = []
+    print('Step4')
     if(user_categoriesQS is not None):
         user_categories = list(val.get('name') for val in user_categoriesQS)
         # favorite_emp = list(val.get('name') for val in favorite_empQS)
@@ -17,7 +19,7 @@ def aprioriFunction(user_id):
         user_categories = list(val.get('name') for val in favorite_empQS)
     recommendedValue = user_categories
     # Data Preprocessing for apriori
-    usersQS = User.objects.all().values_list('emprendimientos_categories')
+    usersQS = User3.objects.all().values_list('emprendimientos_categories')
     transactions = []
     for category in range(0, len(usersQS)):
         transactions.append(list(val.get('name') for val in usersQS[category][0]))
@@ -27,7 +29,7 @@ def aprioriFunction(user_id):
     ## Displaying the first results coming directly from the output of the apriori function
     results = list(rules)
     results
-
+    print('Step5')
     ## Putting the results well organised into a list
     def inspect(results):
         lhs         = [tuple(result[2][0][0])[0] for result in results]
@@ -55,7 +57,7 @@ def aprioriFunction(user_id):
     unique_userRules = []
     [unique_userRules.append(rule) for rule in userRules if rule not in unique_userRules]
     result = []
-
+    print('Step6')
     for rule in range(0,1):
-        result.append(Emprendimiento.objects.filter(categories__0__type=unique_userRules[rule]).values()[:1][0])
+        result.append(Emprendimiento2.objects.filter(categories__0__type=unique_userRules[rule]).values()[:1][0])
     return result
